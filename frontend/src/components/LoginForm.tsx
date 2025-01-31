@@ -2,18 +2,18 @@
 function LoginForm() {
     return (
         <>
-            <form>
+            <form className="p-4 border rounded shadow bg-white">
                 <h2>Sign In</h2>
-                <div>
-                    <label>Username</label>
-                    <input type="text" placeholder="Enter username" />
+                <div className="form-floating mb-3">
+                    <input type="text" className="form-control" id="username" placeholder="Enter username" />
+                    <label htmlFor="username">Username</label>
+                </div>
+                <div className="form-floating mb-3">
+                    <input type="password" id="password" className="form-control" placeholder="Enter password" />
+                    <label htmlFor="password">Password</label>
                 </div>
                 <div>
-                    <label>Password</label>
-                    <input type="password" placeholder="Enter password" />
-                </div>
-                <div>
-                    <button type="submit">Log In</button>
+                    <button type="submit" className="btn btn-outline-primary">Log In</button>
                 </div>
             </form>
         </>
