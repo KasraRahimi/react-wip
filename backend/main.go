@@ -1,7 +1,22 @@
 package main
 
-import "fmt"
+import (
+	"backend/routing"
+	"fmt"
+	"log"
+	"net/http"
+)
 
 func main() {
-	fmt.Println("Hello World")
+	port := ":8080"
+	server := &http.Server{
+		Addr:    port,
+		Handler: routing.GetServerMux(),
+	}
+
+	fmt.Printf("Server listening on %s\n", port)
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatal(err)
+	}
+
 }
