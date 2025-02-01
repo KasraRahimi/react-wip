@@ -1,9 +1,19 @@
-const onLoginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log(e);
-};
+import { useState } from "react";
 
 function SignUpForm() {
+    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+
+    const onLoginSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log(`email: ${email}`);
+        console.log(`username: ${username}`);
+        console.log(`password: ${password}`);
+    };
+
+    const isDisabled = !email || !username || !password;
+
     return (
         <>
             <form
@@ -17,6 +27,7 @@ function SignUpForm() {
                         className="form-control"
                         id="email"
                         placeholder="Enter email"
+                        onChange={e => setEmail(e.target.value)}
                     />
                     <label htmlFor="email">Email</label>
                 </div>
@@ -26,6 +37,7 @@ function SignUpForm() {
                         className="form-control"
                         id="username"
                         placeholder="Enter username"
+                        onChange={e => setUsername(e.target.value)}
                     />
                     <label htmlFor="username">Username</label>
                 </div>
@@ -35,13 +47,15 @@ function SignUpForm() {
                         id="password"
                         className="form-control"
                         placeholder="Enter password"
+                        onChange={e => setPassword(e.target.value)}
                     />
                     <label htmlFor="password">Password</label>
                 </div>
                 <div>
                     <button
                         type="submit"
-                        className="btn btn-outline-primary w-100"
+                        className={`btn btn-outline-${isDisabled ? 'secondary' : 'primary'} w-100`}
+                        disabled={isDisabled}
                     >
                         Sign Up
                     </button>
