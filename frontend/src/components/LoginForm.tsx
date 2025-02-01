@@ -6,9 +6,8 @@ function LoginForm() {
 
   const onLoginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    console.log(Array(data.entries()));
-    for (let [key, value] of data.entries()) console.info(`${key}: ${value}`);
+    console.log(`username: ${username}`)
+    console.log(`password: ${password}`)
   };
 
   const isDisabled = !username || !password;
