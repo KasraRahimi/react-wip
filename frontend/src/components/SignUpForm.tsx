@@ -1,15 +1,15 @@
 import { useState } from "react";
+import { postSignUpInfo } from "../routes/authentication";
 
 function SignUpForm() {
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const onLoginSubmit = (e: React.FormEvent) => {
+    const onLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(`email: ${email}`);
-        console.log(`username: ${username}`);
-        console.log(`password: ${password}`);
+        const text = await postSignUpInfo(email, username, password);
+        console.log(text);
     };
 
     const isDisabled = !email || !username || !password;
