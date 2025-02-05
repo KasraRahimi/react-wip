@@ -16,3 +16,15 @@ func (u *UserDAO) Create(user User) error {
 
 	return err
 }
+
+func (u *UserDAO) ReadByUsername(username string) (User, error) {
+	var user User
+	db, err := GetDB()
+	if err != nil {
+		return user, err
+	}
+	defer db.Close()
+
+	err = db.QueryRow(`SELECT * FROM users WHERE username=?`, username).Scan(&user.Id, &user.Email, &user.Username, &user.PasswordHash)
+	return user, err
+}
