@@ -54,6 +54,7 @@ func (h *SignUpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		h.handlePost(w, r)
 	default:
-		fmt.Fprintf(w, "ERROR! %s %s", r.Method, r.URL)
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		fmt.Fprintln(w, "You must use POST method for signup")
 	}
 }
