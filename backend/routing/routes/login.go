@@ -54,6 +54,9 @@ func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
 		h.handlePost(w, r)
+	case http.MethodOptions:
+		w.WriteHeader(http.StatusOK)
+		return
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		fmt.Fprintln(w, "You must use POST method for log in")
