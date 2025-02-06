@@ -18,5 +18,6 @@ func corsMiddleware(next http.Handler) http.Handler {
 func GetServerMux() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.Handle(API_URL+"/auth/signup", corsMiddleware(&routes.SignUpHandler{}))
+	mux.Handle(API_URL+"/auth/login", corsMiddleware(&routes.LoginHandler{}))
 	return mux
 }
