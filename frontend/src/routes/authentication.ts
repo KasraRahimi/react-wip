@@ -2,21 +2,39 @@ import axios from "axios";
 import { API_URL } from "../constants";
 
 const api = axios.create({
-    baseURL: API_URL
-})
+    baseURL: API_URL,
+});
 
-export async function postSignUpInfo(email: string, username: string, password: string): Promise<string | null> {
+export async function postSignUpInfo(
+    email: string,
+    username: string,
+    password: string
+): Promise<string | null> {
     try {
-        const response = await api.post('auth/signup', 
-            {
-                email,
-                username,
-                password
-            }
-        )
+        const response = await api.post("auth/signup", {
+            email,
+            username,
+            password,
+        });
         return response.data;
     } catch (error) {
-        console.log(error)
-        return null
+        console.log(error);
+        return null;
+    }
+}
+
+export async function postLogInInfo(
+    username: string,
+    password: string
+): Promise<string | null> {
+    try {
+        const response = await api.post("auth/login", {
+            username,
+            password,
+        });
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        return null;
     }
 }
