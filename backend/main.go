@@ -1,6 +1,7 @@
 package main
 
 import (
+	"backend/database"
 	"backend/routing"
 	"fmt"
 	"log"
@@ -8,6 +9,10 @@ import (
 )
 
 func main() {
+	err := database.SetupDB()
+	if err != nil {
+		log.Fatal(err)
+	}
 	port := ":8080"
 	server := &http.Server{
 		Addr:    port,

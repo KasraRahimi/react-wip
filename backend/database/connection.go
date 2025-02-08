@@ -22,3 +22,27 @@ func GetDB() (*sql.DB, error) {
 	}
 	return db, err
 }
+
+func CreateUserTable() error {
+	db, err := GetDB()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS users (
+			id				int PRIMARY KEY AUTO_INCREMENT,
+			email 			VARCHAR(127) UNIQUE NOT NULL,
+			username 		VARCHAR(31) UNIQUE NOT NULL,
+			passwordHash	VARCHAR(127) UNIQUE NOT NULL
+		)
+	`)
+
+	return err
+}
+
+func SetupDB() error {
+	err := CreateUserTable()
+	return err
+}
