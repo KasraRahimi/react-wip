@@ -1,14 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { postLogInInfo } from "../routes/authentication";
+import { HttpStatusCode } from "axios";
+import { useNavigate } from "react-router";
+import { useAppDispatch } from "../redux/store";
+import { setToken, setUser } from "../redux/slices/userSlice";
 
 function LoginForm() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     const onLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const text = await postLogInInfo(username, password);
-        console.log(text)
+        const res = await postLogInInfo(username, password);
+        console.log(res)
+        if (res?.status == HttpStatusCode.Ok) {
+            dispatch(setUser(res.data.user));
+            dispatch(setToken(res.data.token));
+            navigate("/dashboard")
+        }
     };
 
     const isDisabled = !username || !password;

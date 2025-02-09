@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { API_URL } from "../constants";
 
 const api = axios.create({
@@ -26,13 +26,13 @@ export async function postSignUpInfo(
 export async function postLogInInfo(
     username: string,
     password: string
-): Promise<string | null> {
+): Promise<AxiosResponse | null> {
     try {
         const response = await api.post("auth/login", {
             username,
             password,
         });
-        return response.data;
+        return response;
     } catch (error) {
         console.error(error);
         return null;

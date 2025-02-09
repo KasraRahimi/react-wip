@@ -13,6 +13,17 @@ type loginStruct struct {
 	Password string `json:"password"`
 }
 
+type responseUser struct {
+	Id       string `json:"id"`
+	Email    string `json:"email"`
+	Username string `json:"username"`
+}
+
+type loginResponse struct {
+	Token string       `json:"token"`
+	User  responseUser `json:"user"`
+}
+
 type LoginHandler struct{}
 
 func (h *LoginHandler) handlePost(w http.ResponseWriter, r *http.Request) {
@@ -46,8 +57,19 @@ func (h *LoginHandler) handlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	responseUser := responseUser{
+		Id:       user.Username,
+		Email:    user.Email,
+		Username: user.Username,
+	}
+
+	reponsePayload := loginResponse{
+		Token: "empty-token",
+		User:  responseUser,
+	}
+
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "Login successful!")
+	json.NewEncoder(w).Encode(reponsePayload)
 }
 
 func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
