@@ -5,6 +5,7 @@ import Home from './pages/home.tsx'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { Provider } from 'react-redux'
 import store from './redux/store.ts'
+import Dashboard from './pages/dashboard.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -12,6 +13,7 @@ createRoot(document.getElementById('root')!).render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home/>} />
+          <Route path="/dashboard" element={<Dashboard/>} />
         </Routes>
       </BrowserRouter>
     </Provider>
