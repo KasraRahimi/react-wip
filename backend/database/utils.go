@@ -29,7 +29,7 @@ func GenerateToken(userId string, timeToExpireMinutes int) (string, error) {
 	})
 
 	secretKey := os.Getenv("SECRET_KEY")
-	return token.SignedString(secretKey)
+	return token.SignedString([]byte(secretKey))
 }
 
 type TokenStruct struct {

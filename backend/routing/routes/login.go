@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 type loginStruct struct {
@@ -58,13 +59,20 @@ func (h *LoginHandler) handlePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	responseUser := responseUser{
-		Id:       user.Username,
+		Id:       strconv.Itoa(user.Id),
 		Email:    user.Email,
 		Username: user.Username,
 	}
 
+	tokenString, err := database.GenerateToken(responseUser.Id, 60)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintln(w, err.Error())
+		return
+	}
+
 	reponsePayload := loginResponse{
-		Token: "empty-token",
+		Token: tokenString,
 		User:  responseUser,
 	}
 
