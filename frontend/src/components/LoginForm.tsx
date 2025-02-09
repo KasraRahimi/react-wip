@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { postLogInInfo } from "../routes/authentication";
 import { HttpStatusCode } from "axios";
 import { useNavigate } from "react-router";
