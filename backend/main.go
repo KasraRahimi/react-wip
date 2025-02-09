@@ -6,13 +6,21 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	err := database.SetupDB()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	err = database.SetupDB()
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	port := ":8080"
 	server := &http.Server{
 		Addr:    port,
