@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { API_URL } from "../constants";
 
 const api = axios.create({
@@ -36,5 +36,18 @@ export async function postLogInInfo(
     } catch (error) {
         console.error(error);
         return null;
+    }
+}
+
+export async function getUserMe(token: string): Promise<AxiosResponse | AxiosError> {
+    try {
+        const response = await api.get("user/me", {
+            headers: {
+                token
+            }
+        })
+        return response
+    } catch (error) {
+        return error as AxiosError
     }
 }
