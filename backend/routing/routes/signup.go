@@ -3,8 +3,9 @@ package routes
 import (
 	"backend/database"
 	"encoding/json"
-	"fmt"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type signUpJson struct {
@@ -13,21 +14,21 @@ type signUpJson struct {
 	Password string `json:"password"`
 }
 
-type SignUpHandler struct{}
-
-func (h *SignUpHandler) handlePost(w http.ResponseWriter, r *http.Request) {
+func PostSignUpEndpoint(c *gin.Context) {
 	var data signUpJson
-	err := json.NewDecoder(r.Body).Decode(&data)
+	err := json.NewDecoder(c.Request.Body).Decode(&data)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, "Invalid json format")
+		c.JSON(http.StatusBadRequest, Error{
+			Error: "Invalid JSON format",
+		})
 		return
 	}
 
 	passwordHash, err := database.GeneratePasswordHash(data.Password)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, "Could not generate password hash")
+		c.JSON(http.StatusInternalServerError, Error{
+			Error: "Could not generate password hash",
+		})
 		return
 	}
 
@@ -40,24 +41,13 @@ func (h *SignUpHandler) handlePost(w http.ResponseWriter, r *http.Request) {
 
 	err = userDAO.Create(newUser)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, "Could not create account")
+		c.JSON(http.StatusInternalServerError, Error{
+			Error: "Could not create account",
+		})
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	fmt.Fprintf(w, "Successfully created the account")
-}
-
-func (h *SignUpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		h.handlePost(w, r)
-	case http.MethodOptions:
-		w.WriteHeader(http.StatusOK)
-		return
-	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		fmt.Fprintln(w, "You must use POST method for signup")
-	}
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Successfully created account",
+	})
 }

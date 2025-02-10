@@ -3,9 +3,7 @@ package main
 import (
 	"backend/database"
 	"backend/routing"
-	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/joho/godotenv"
 )
@@ -22,14 +20,9 @@ func main() {
 	}
 
 	port := ":8080"
-	server := &http.Server{
-		Addr:    port,
-		Handler: routing.GetServerMux(),
-	}
+	router := routing.GetServerRouter()
 
-	fmt.Printf("Server listening on %s\n", port)
-	if err := server.ListenAndServe(); err != nil {
+	if err := router.Run(port); err != nil {
 		log.Fatal(err)
 	}
-
 }

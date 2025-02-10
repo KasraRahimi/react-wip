@@ -2,22 +2,37 @@ package routing
 
 import (
 	"backend/routing/routes"
+	"fmt"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-const API_URL = "/api"
-
-func corsMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		next.ServeHTTP(w, r)
-	})
+func corsGinMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		c.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
+		fmt.Println("Did the middleware")
+		if c.Request.Method == http.MethodOptions {
+			c.AbortWithStatus(http.StatusOK)
+			return
+		}
+		c.Next()
+	}
 }
 
-func GetServerMux() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.Handle(API_URL+"/auth/signup", corsMiddleware(&routes.SignUpHandler{}))
-	mux.Handle(API_URL+"/auth/login", corsMiddleware(&routes.LoginHandler{}))
-	return mux
+func GetServerRouter() *gin.Engine {
+	router := gin.Default()
+	router.Use(corsGinMiddleware())
+
+	api := router.Group("/api")
+	{
+		auth := api.Group("/auth")
+		{
+			auth.POST("/login", routes.PostLoginEndpoint)
+			auth.POST("/signup", routes.PostSignUpEndpoint)
+		}
+	}
+	return router
 }

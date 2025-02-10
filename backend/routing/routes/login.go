@@ -4,9 +4,10 @@ import (
 	"backend/database"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 type loginStruct struct {
@@ -25,15 +26,21 @@ type loginResponse struct {
 	User  responseUser `json:"user"`
 }
 
-type LoginHandler struct{}
+type Error struct {
+	Error string `json:"error"`
+}
 
-func (h *LoginHandler) handlePost(w http.ResponseWriter, r *http.Request) {
+func PostLoginEndpoint(c *gin.Context) {
 	var data loginStruct
 	userDao := database.UserDAO{}
-	err := json.NewDecoder(r.Body).Decode(&data)
+	err := json.NewDecoder(c.Request.Body).Decode(&data)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintln(w, "The format of JSON information is incorrect")
+		c.JSON(
+			http.StatusBadRequest,
+			Error{
+				Error: "The format of the JSON is incorrect",
+			},
+		)
 		return
 	}
 
@@ -41,20 +48,23 @@ func (h *LoginHandler) handlePost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
-			w.WriteHeader(http.StatusUnauthorized)
-			fmt.Fprintln(w, "Incorrect username or password")
+			c.JSON(http.StatusUnauthorized, Error{
+				Error: "Incorrect username or password",
+			})
 			return
 		default:
-			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintln(w, "Something went wrong")
+			c.JSON(http.StatusInternalServerError, Error{
+				Error: "Something went wrong",
+			})
 			return
 		}
 	}
 
 	isPasswordCorrect := database.IsPasswordAndHashSame(data.Password, user.PasswordHash)
 	if !isPasswordCorrect {
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprintln(w, "Incorrect username or password")
+		c.JSON(http.StatusUnauthorized, Error{
+			Error: "Incorrect username or password",
+		})
 		return
 	}
 
@@ -66,8 +76,9 @@ func (h *LoginHandler) handlePost(w http.ResponseWriter, r *http.Request) {
 
 	tokenString, err := database.GenerateToken(responseUser.Id, 60)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, err.Error())
+		c.JSON(http.StatusInternalServerError, Error{
+			Error: err.Error(),
+		})
 		return
 	}
 
@@ -76,19 +87,5 @@ func (h *LoginHandler) handlePost(w http.ResponseWriter, r *http.Request) {
 		User:  responseUser,
 	}
 
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(reponsePayload)
-}
-
-func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodPost:
-		h.handlePost(w, r)
-	case http.MethodOptions:
-		w.WriteHeader(http.StatusOK)
-		return
-	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		fmt.Fprintln(w, "You must use POST method for log in")
-	}
+	c.JSON(http.StatusOK, reponsePayload)
 }
