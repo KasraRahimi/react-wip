@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { getUserMe } from "../../routes/authentication";
+import { AxiosResponse, HttpStatusCode } from "axios";
 
 interface User {
     id: string,
@@ -12,7 +14,27 @@ interface UserState {
     user?: User,
 }
 
-const initialState: UserState = {};
+const getInitialState = async () => {
+    const token = localStorage.getItem("token")
+    if (!token) return {}
+
+    let response = await getUserMe(token);
+    if (response.status == HttpStatusCode.Ok) {
+        response = response as AxiosResponse
+        const user = {
+            id: response.data.id,
+            email: response.data.email,
+            username: response.data.username,
+        }
+        return {
+            token,
+            user
+        }
+    }
+    return {}
+}
+
+const initialState: UserState = await getInitialState()
 
 export const userSlice = createSlice({
     name: "user",

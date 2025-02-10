@@ -18,6 +18,7 @@ function LoginForm() {
         if (res?.status == HttpStatusCode.Ok) {
             dispatch(setUser(res.data.user));
             dispatch(setToken(res.data.token));
+            localStorage.setItem("token", res.data.token)
             navigate("/dashboard")
         }
     };
