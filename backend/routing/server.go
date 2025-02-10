@@ -3,7 +3,6 @@ package routing
 import (
 	"backend/database"
 	"backend/routing/routes"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -13,9 +12,8 @@ import (
 func corsGinMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Header("Access-Control-Allow-Origin", "*")
-		c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization, token")
 		c.Header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
-		fmt.Println("Did the middleware")
 		if c.Request.Method == http.MethodOptions {
 			c.AbortWithStatus(http.StatusOK)
 			return
