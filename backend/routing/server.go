@@ -1,9 +1,11 @@
 package routing
 
 import (
+	"backend/database"
 	"backend/routing/routes"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,6 +24,25 @@ func corsGinMiddleware() gin.HandlerFunc {
 	}
 }
 
+func authorizationMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tokenString := c.Request.Header.Get("token")
+		token, err := database.ParseToken(tokenString)
+		if err != nil {
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+
+		if time.Now().After(token.Ttl) {
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+
+		c.Set("userId", token.Id)
+		c.Next()
+	}
+}
+
 func GetServerRouter() *gin.Engine {
 	router := gin.Default()
 	router.Use(corsGinMiddleware())
@@ -32,6 +53,12 @@ func GetServerRouter() *gin.Engine {
 		{
 			auth.POST("/login", routes.PostLoginEndpoint)
 			auth.POST("/signup", routes.PostSignUpEndpoint)
+		}
+
+		authorized := api.Group("/")
+		authorized.Use(authorizationMiddleware())
+		{
+			authorized.GET("/user/me", routes.GetUserMe)
 		}
 	}
 	return router
