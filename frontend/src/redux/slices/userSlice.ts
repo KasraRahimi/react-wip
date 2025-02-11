@@ -46,8 +46,9 @@ export const userSlice = createSlice({
         setToken: (state, token: PayloadAction<string>) => {
             state.token = token.payload
         },
-        clearUser: (state) => {
+        clearUser: (state, shouldClearLocalStorage: PayloadAction<boolean>) => {
             state = {}
+            if (shouldClearLocalStorage.payload) localStorage.removeItem("token");
         }
     }
 });
