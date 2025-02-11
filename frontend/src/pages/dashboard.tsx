@@ -1,7 +1,8 @@
 import { useEffect } from "react";
-import { clearUser } from "../redux/slices/userSlice";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { useNavigate } from "react-router";
+import LogoutBtn from "../components/buttons/LogoutBtn";
+import Navbar from "../components/Navbar";
 
 function Dashboard() {
     const user = useAppSelector((state) => state.user.user);
@@ -16,8 +17,9 @@ function Dashboard() {
 
     return (
         <>
+            <Navbar />
             <h1>Hello, {user?.username}</h1>
-            <button className="btn" onClick={() => dispatch(clearUser())} />
+            <LogoutBtn/>
         </>
     );
 }
