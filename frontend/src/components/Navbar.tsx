@@ -15,7 +15,7 @@ function Navbar() {
         },
         {
             title: "Profile",
-            link: "/user/me",
+            link: "/profile",
         },
         {
             title: "Search",
