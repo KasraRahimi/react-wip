@@ -2,7 +2,11 @@ import { useNavigate } from "react-router";
 import { useAppDispatch } from "../../redux/store"
 import { clearUser } from "../../redux/slices/userSlice";
 
-function LogoutBtn() {
+interface LogoutProps {
+    className?: string,
+}
+
+function LogoutBtn({ className }: LogoutProps) {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -12,7 +16,7 @@ function LogoutBtn() {
     }
 
     return (
-        <button className="btn" onClick={onLogout}>Log Out</button>
+        <button className={className} onClick={onLogout}>Log Out</button>
     );
 }
 

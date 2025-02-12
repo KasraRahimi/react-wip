@@ -1,3 +1,4 @@
+import LogoutBtn from "./buttons/LogoutBtn"
 
 interface NavItem {
     title: string,
@@ -41,6 +42,9 @@ function Navbar() {
                         <ul className="navbar-nav">
                             {listOfNavItems}
                         </ul>
+                        <div className="ms-auto">
+                            <LogoutBtn className="btn btn-outline-danger" />
+                        </div>
                     </div>
                 </div>
             </nav>
