@@ -1,20 +1,45 @@
 
+interface NavItem {
+    title: string,
+    link: string,
+}
+
 function Navbar() {
     const textColor = "text-light"
 
+    const navItems: NavItem[] = [
+        {
+            title: "Home",
+            link: "/dashboard"
+        },
+        {
+            title: "Profile",
+            link: "/user/me",
+        },
+        {
+            title: "Search",
+            link: "/search"
+        }
+    ]
+
+    const listOfNavItems = navItems.map((navItem) => {
+        return (
+            <li className="nav-item">
+                <a className={`nav-link ${textColor}`} href={navItem.link}>
+                    {navItem.title}
+                </a>
+            </li>
+        )
+    })
+
     return (
         <>
-            <nav className="navbar bg-green-500 navbar-expand-lg">
+            <nav className="navbar bg-success navbar-expand-lg">
                 <div className="container-fluid">
                     <a className={`navbar-brand ${textColor}`}>Kawa's Site</a>
                     <div className="collapse navbar-collapse">
                         <ul className="navbar-nav">
-                            <li className="nav-item">
-                                <a className={`nav-link ${textColor} active`} href="/dashboard">Home</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className={`nav-link ${textColor}`} href="/user/me">Profile</a>
-                            </li>
+                            {listOfNavItems}
                         </ul>
                     </div>
                 </div>
