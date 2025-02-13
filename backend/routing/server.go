@@ -45,18 +45,22 @@ func GetServerRouter() *gin.Engine {
 	router := gin.Default()
 	router.Use(corsGinMiddleware())
 
+	serverConfig := routes.ServerConfig{
+		UserDao: database.UserDAO{},
+	}
+
 	api := router.Group("/api")
 	{
 		auth := api.Group("/auth")
 		{
-			auth.POST("/login", routes.PostLoginEndpoint)
-			auth.POST("/signup", routes.PostSignUpEndpoint)
+			auth.POST("/login", serverConfig.PostLoginEndpoint)
+			auth.POST("/signup", serverConfig.PostSignUpEndpoint)
 		}
 
 		authorized := api.Group("/")
 		authorized.Use(authorizationMiddleware())
 		{
-			authorized.GET("/user/me", routes.GetUserMe)
+			authorized.GET("/user/me", serverConfig.GetUserMe)
 		}
 	}
 	return router

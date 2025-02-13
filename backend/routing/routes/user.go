@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"backend/database"
 	"net/http"
 	"strconv"
 
@@ -14,11 +13,10 @@ type userResponse struct {
 	Username string `json:"username"`
 }
 
-func GetUserMe(c *gin.Context) {
+func (s *ServerConfig) GetUserMe(c *gin.Context) {
 	userId, _ := strconv.Atoi(c.GetString("userId"))
-	userDao := database.UserDAO{}
 
-	user, err := userDao.ReadById(userId)
+	user, err := s.UserDao.ReadById(userId)
 	if err != nil {
 		c.JSON(http.StatusNotFound, Error{
 			Error: "Cannot find user",

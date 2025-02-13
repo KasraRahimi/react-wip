@@ -14,7 +14,7 @@ type signUpJson struct {
 	Password string `json:"password"`
 }
 
-func PostSignUpEndpoint(c *gin.Context) {
+func (s *ServerConfig) PostSignUpEndpoint(c *gin.Context) {
 	var data signUpJson
 	err := json.NewDecoder(c.Request.Body).Decode(&data)
 	if err != nil {
@@ -32,14 +32,13 @@ func PostSignUpEndpoint(c *gin.Context) {
 		return
 	}
 
-	userDAO := database.UserDAO{}
 	newUser := database.User{
 		Email:        data.Email,
 		Username:     data.Username,
 		PasswordHash: passwordHash,
 	}
 
-	err = userDAO.Create(newUser)
+	err = s.UserDao.Create(newUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, Error{
 			Error: "Could not create account",

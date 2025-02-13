@@ -30,9 +30,8 @@ type Error struct {
 	Error string `json:"error"`
 }
 
-func PostLoginEndpoint(c *gin.Context) {
+func (s *ServerConfig) PostLoginEndpoint(c *gin.Context) {
 	var data loginStruct
-	userDao := database.UserDAO{}
 	err := json.NewDecoder(c.Request.Body).Decode(&data)
 	if err != nil {
 		c.JSON(
@@ -44,7 +43,7 @@ func PostLoginEndpoint(c *gin.Context) {
 		return
 	}
 
-	user, err := userDao.ReadByUsername(data.Username)
+	user, err := s.UserDao.ReadByUsername(data.Username)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
