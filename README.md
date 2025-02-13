@@ -40,7 +40,7 @@ docker compose up -d
 ```
 If you ever want to run the server afterwards, you have to make sure that docker is running, otherwise the backend won't have a database to connect to.
 ## Running the project
-Make sure you're in situated in the project before you run these commands
+Make sure you're situated in the project before you run these commands
 - Start the backend first.
 ```
 cd backend
