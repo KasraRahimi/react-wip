@@ -63,5 +63,10 @@ func GetServerRouter() *gin.Engine {
 			authorized.GET("/user/me", serverConfig.GetUserMe)
 		}
 	}
+
+	static := router.Group("/static")
+	{
+		static.Static("/", "./static/")
+	}
 	return router
 }
