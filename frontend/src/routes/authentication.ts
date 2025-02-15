@@ -1,5 +1,5 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
-import { API_URL } from "../constants";
+import axios, {AxiosResponse} from "axios";
+import {API_URL} from "../constants";
 
 const api = axios.create({
     baseURL: API_URL,
@@ -39,15 +39,16 @@ export async function postLogInInfo(
     }
 }
 
-export async function getUserMe(token: string): Promise<AxiosResponse | AxiosError> {
+export async function getUserMe(token: string): Promise<AxiosResponse> {
     try {
-        const response = await api.get("user/me", {
+        return await api.get("user/me", {
             headers: {
                 token
             }
         })
-        return response
     } catch (error) {
-        return error as AxiosError
+        if (axios.isAxiosError(error))
+            throw error;
+        throw new Error("Something went wrong");
     }
 }

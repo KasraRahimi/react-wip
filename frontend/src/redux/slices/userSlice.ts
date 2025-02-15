@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { getUserMe } from "../../routes/authentication";
-import { AxiosResponse, HttpStatusCode } from "axios";
+import axios, { HttpStatusCode } from "axios";
 
 interface User {
     id: string,
@@ -14,24 +14,29 @@ interface UserState {
     user?: User,
 }
 
-const getInitialState = async () => {
+const getInitialState = async (): Promise<UserState> => {
     const token = localStorage.getItem("token")
     if (!token) return {}
 
-    let response = await getUserMe(token);
-    if (response.status == HttpStatusCode.Ok) {
-        response = response as AxiosResponse
+    try {
+        const response = await getUserMe(token);
+        if (response.status !== HttpStatusCode.Ok) {
+            return {}
+        }
         const user = {
             id: response.data.id,
             email: response.data.email,
             username: response.data.username,
-        }
+        };
         return {
             token,
             user
-        }
+        };
+    } catch (error) {
+        if (!axios.isAxiosError(error))
+            console.error(error);
+        return {};
     }
-    return {}
 }
 
 const initialState: UserState = await getInitialState()
@@ -46,9 +51,9 @@ export const userSlice = createSlice({
         setToken: (state, token: PayloadAction<string>) => {
             state.token = token.payload
         },
-        clearUser: (state, shouldClearLocalStorage: PayloadAction<boolean>) => {
-            state = {}
+        clearUser: (_, shouldClearLocalStorage: PayloadAction<boolean>) => {
             if (shouldClearLocalStorage.payload) localStorage.removeItem("token");
+            return {};
         }
     }
 });
