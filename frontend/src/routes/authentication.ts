@@ -26,16 +26,16 @@ export async function postSignUpInfo(
 export async function postLogInInfo(
     username: string,
     password: string
-): Promise<AxiosResponse | null> {
+): Promise<AxiosResponse> {
     try {
-        const response = await api.post("auth/login", {
+        return await api.post("auth/login", {
             username,
             password,
         });
-        return response;
     } catch (error) {
-        console.error(error);
-        return null;
+        if (axios.isAxiosError(error))
+            throw error;
+        throw new Error("Something went wrong");
     }
 }
 
