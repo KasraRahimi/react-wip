@@ -37,9 +37,10 @@ function SignUpForm() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
+    const [formErrors, setFormErrors] = useState<FormError[]>([]);
+
     const onLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const formErrors = validateForm(email, username, password);
         if (formErrors.length !== 0) {
             console.log(formErrors);
             return;
@@ -58,7 +59,82 @@ function SignUpForm() {
         }
     };
 
-    const isDisabled = !email || !username || !password;
+    const isDisabled = formErrors.length > 0;
+
+    const getEmailElement = () => {
+        let errorText: string | undefined = undefined;
+        if (formErrors.includes(FormError.NoEmail)) errorText = "Email is required";
+        else if (formErrors.includes(FormError.InvalidEmail)) errorText = "Email address is invalid";
+
+        const validity = errorText ? "is-invalid" : "is-valid";
+        return (
+            <div className="form-floating mb-3">
+                <input
+                    type="email"
+                    className={`form-control ${validity}`}
+                    id="email"
+                    placeholder="Enter email"
+                    onChange={e => {
+                            const newEmail = e.target.value;
+                            setEmail(newEmail);
+                            setFormErrors(validateForm(newEmail, username, password));
+                    }}
+                />
+                <label htmlFor="email">Email</label>
+                <div className="invalid-feedback">{errorText}</div>
+            </div>
+        )
+    }
+
+    const getUsernameElement = () => {
+        let errorText: string | undefined = undefined;
+        if (formErrors.includes(FormError.NoUsername)) errorText = "Username is required";
+        else if (formErrors.includes(FormError.InvalidUsername)) errorText = "Username is invalid";
+
+        const validity = errorText ? "is-invalid" : "is-valid";
+
+        return (
+            <div className="form-floating mb-3">
+                <input
+                    type="text"
+                    className={`form-control ${validity}`}
+                    id="username"
+                    placeholder="Enter username"
+                    onChange={e => {
+                        const newUsername = e.target.value;
+                        setUsername(newUsername);
+                        setFormErrors(validateForm(email, newUsername, password));
+                    }}
+                />
+                <label htmlFor="username">Username</label>
+                <div className="invalid-feedback">{errorText}</div>
+            </div>
+        )
+    }
+
+    const getPasswordElement = () => {
+        let errorText: string | undefined = undefined;
+        if (formErrors.includes(FormError.ShortPassword)) errorText = "Password must be at least 8 characters";
+
+        const validity = errorText ? "is-invalid" : "is-valid";
+        return (
+            <div className="form-floating mb-3">
+                <input
+                    type="password"
+                    id="password"
+                    className={`form-control ${validity}`}
+                    placeholder="Enter password"
+                    onChange={e => {
+                        const newPassword = e.target.value;
+                        setPassword(newPassword);
+                        setFormErrors(validateForm(email, username, newPassword));
+                    }}
+                />
+                <label htmlFor="password">Password</label>
+                <div className="invalid-feedback">{errorText}</div>
+            </div>
+        )
+    }
 
     return (
         <>
@@ -67,36 +143,9 @@ function SignUpForm() {
                 onSubmit={onLoginSubmit}
             >
                 <h2 className="text-center">Sign Up</h2>
-                <div className="form-floating mb-3">
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="email"
-                        placeholder="Enter email"
-                        onChange={e => setEmail(e.target.value)}
-                    />
-                    <label htmlFor="email">Email</label>
-                </div>
-                <div className="form-floating mb-3">
-                    <input
-                        type="text"
-                        className="form-control"
-                        id="username"
-                        placeholder="Enter username"
-                        onChange={e => setUsername(e.target.value)}
-                    />
-                    <label htmlFor="username">Username</label>
-                </div>
-                <div className="form-floating mb-3">
-                    <input
-                        type="password"
-                        id="password"
-                        className="form-control"
-                        placeholder="Enter password"
-                        onChange={e => setPassword(e.target.value)}
-                    />
-                    <label htmlFor="password">Password</label>
-                </div>
+                {getEmailElement()}
+                {getUsernameElement()}
+                {getPasswordElement()}
                 <div>
                     <button
                         type="submit"
