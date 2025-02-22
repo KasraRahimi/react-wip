@@ -1,6 +1,36 @@
 import { useState } from "react";
 import { postSignUpInfo } from "../routes/authentication";
+import { validate as emailValidator } from "email-validator";
 import axios from "axios";
+
+enum FormError {
+    // FRONTEND CHECKS
+    InvalidEmail = "invalidEmail",
+    NoEmail = "noEmail",
+    InvalidUsername = "invalidUsername",
+    NoUsername = "noUsername",
+    InvalidPassword = "invalidPassword",
+    ShortPassword = "shortPassword",
+
+    // BACKEND CHECKS
+    EmailInUse = "emailInUse",
+    UsernameInUse = "usernameInUse"
+}
+
+const MINIMAL_PASSWORD_LENGTH = 8;
+
+const validateForm = (email: string, username: string, password: string): FormError[] => {
+    const formErrors = [];
+
+    if (!email || email === "") formErrors.push(FormError.NoEmail);
+    else if (!emailValidator(email)) formErrors.push(FormError.InvalidEmail);
+
+    if (!username || username == "") formErrors.push(FormError.NoUsername);
+
+    if (password.length < MINIMAL_PASSWORD_LENGTH) formErrors.push(FormError.ShortPassword);
+
+    return formErrors;
+}
 
 function SignUpForm() {
     const [email, setEmail] = useState("");
@@ -9,6 +39,11 @@ function SignUpForm() {
 
     const onLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const formErrors = validateForm(email, username, password);
+        if (formErrors.length !== 0) {
+            console.log(formErrors);
+            return;
+        }
         let response;
         try {
             response = await postSignUpInfo(email, username, password);
