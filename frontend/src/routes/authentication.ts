@@ -9,17 +9,18 @@ export async function postSignUpInfo(
     email: string,
     username: string,
     password: string
-): Promise<string | null> {
+): Promise<AxiosResponse> {
     try {
-        const response = await api.post("auth/signup", {
+        return api.post("auth/signup", {
             email,
             username,
-            password,
+            password
         });
-        return response.data;
-    } catch (error) {
-        console.log(error);
-        return null;
+    } catch (err) {
+        if (axios.isAxiosError(err)) {
+            throw err;
+        }
+        throw new Error("Something went wrong");
     }
 }
 

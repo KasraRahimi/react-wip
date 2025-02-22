@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { postSignUpInfo } from "../routes/authentication";
+import axios from "axios";
 
 function SignUpForm() {
     const [email, setEmail] = useState("");
@@ -8,8 +9,18 @@ function SignUpForm() {
 
     const onLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const text = await postSignUpInfo(email, username, password);
-        console.log(text);
+        let response;
+        try {
+            response = await postSignUpInfo(email, username, password);
+            console.log(response.data);
+        } catch (err) {
+            if (!axios.isAxiosError(err)) return;
+            switch (err.status) {
+                default:
+                    console.log(`Received Status Code: ${err.status}`);
+                    console.log(err.response);
+            }
+        }
     };
 
     const isDisabled = !email || !username || !password;
