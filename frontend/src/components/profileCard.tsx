@@ -7,7 +7,9 @@ function ProfileCard() {
     return (
         <div className="card text-center w-25">
             <div className="card-body">
-                <SameWidthCircularImage src="http://localhost:8080/static/jiyuu.jpg" />
+                <SameWidthCircularImage
+                    onClick={(e) => console.log("clicked")}
+                    src="http://localhost:8080/static/jiyuu.jpg" />
                 <h3>{user?.username}</h3>
             </div>
         </div>
