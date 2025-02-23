@@ -24,6 +24,22 @@ func (s *ServerConfig) PostSignUpEndpoint(c *gin.Context) {
 		return
 	}
 
+	_, err = s.UserDao.ReadByEmail(data.Email)
+	if err == nil {
+		c.JSON(http.StatusConflict, Error{
+			Error: "emailInUse",
+		})
+		return
+	}
+
+	_, err = s.UserDao.ReadByUsername(data.Username)
+	if err == nil {
+		c.JSON(http.StatusConflict, Error{
+			Error: "usernameInUse",
+		})
+		return
+	}
+
 	passwordHash, err := database.GeneratePasswordHash(data.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, Error{

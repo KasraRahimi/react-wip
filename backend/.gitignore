@@ -1,3 +1,4 @@
 *.sum
 .env
 trg/
+static/

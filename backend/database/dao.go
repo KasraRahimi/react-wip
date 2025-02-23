@@ -29,6 +29,18 @@ func (u *UserDAO) ReadByUsername(username string) (User, error) {
 	return user, err
 }
 
+func (u *UserDAO) ReadByEmail(email string) (User, error) {
+	var user User
+	db, err := GetDB()
+	if err != nil {
+		return user, err
+	}
+	defer db.Close()
+
+	err = db.QueryRow(`SELECT * FROM users WHERE email=?`, email).Scan(&user.Id, &user.Email, &user.Username, &user.PasswordHash)
+	return user, err
+}
+
 func (u *UserDAO) ReadById(id int) (User, error) {
 	var user User
 	db, err := GetDB()
