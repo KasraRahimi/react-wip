@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { postSignUpInfo } from "../routes/authentication";
 import { validate as emailValidator } from "email-validator";
-import axios from "axios";
+import axios, {HttpStatusCode} from "axios";
 
 enum FormError {
     // FRONTEND CHECKS
@@ -51,10 +51,14 @@ function SignUpForm() {
             console.log(response.data);
         } catch (err) {
             if (!axios.isAxiosError(err)) return;
+            console.log(`Received Status Code: ${err.status}`);
+            console.log(err.response);
             switch (err.status) {
+                case HttpStatusCode.Conflict:
+                    setFormErrors([err.response?.data.error])
+                    break;
                 default:
-                    console.log(`Received Status Code: ${err.status}`);
-                    console.log(err.response);
+                    break;
             }
         }
     };
@@ -65,6 +69,7 @@ function SignUpForm() {
         let errorText: string | undefined = undefined;
         if (formErrors.includes(FormError.NoEmail)) errorText = "Email is required";
         else if (formErrors.includes(FormError.InvalidEmail)) errorText = "Email address is invalid";
+        else if (formErrors.includes(FormError.EmailInUse)) errorText = "Email is already in use";
 
         const validity = errorText ? "is-invalid" : "is-valid";
         return (
@@ -90,6 +95,7 @@ function SignUpForm() {
         let errorText: string | undefined = undefined;
         if (formErrors.includes(FormError.NoUsername)) errorText = "Username is required";
         else if (formErrors.includes(FormError.InvalidUsername)) errorText = "Username is invalid";
+        else if (formErrors.includes(FormError.UsernameInUse)) errorText = "Username is already in use";
 
         const validity = errorText ? "is-invalid" : "is-valid";
 
