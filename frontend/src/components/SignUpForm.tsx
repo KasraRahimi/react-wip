@@ -37,11 +37,11 @@ function SignUpForm() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const [formErrors, setFormErrors] = useState<FormError[]>([]);
+    const [formErrors, setFormErrors] = useState<FormError[] | undefined>(undefined);
 
     const onLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (formErrors.length !== 0) {
+        if (formErrors?.length !== 0) {
             console.log(formErrors);
             return;
         }
@@ -63,15 +63,17 @@ function SignUpForm() {
         }
     };
 
-    const isDisabled = formErrors.length > 0;
+    const isDisabled = formErrors? formErrors.length > 0 : false;
 
     const getEmailElement = () => {
         let errorText: string | undefined = undefined;
-        if (formErrors.includes(FormError.NoEmail)) errorText = "Email is required";
-        else if (formErrors.includes(FormError.InvalidEmail)) errorText = "Email address is invalid";
-        else if (formErrors.includes(FormError.EmailInUse)) errorText = "Email is already in use";
+        if (formErrors?.includes(FormError.NoEmail)) errorText = "Email is required";
+        else if (formErrors?.includes(FormError.InvalidEmail)) errorText = "Email address is invalid";
+        else if (formErrors?.includes(FormError.EmailInUse)) errorText = "Email is already in use";
 
-        const validity = errorText ? "is-invalid" : "is-valid";
+        let validity = errorText ? "is-invalid" : "is-valid";
+        if (!formErrors) validity = "";
+
         return (
             <div className="form-floating mb-3">
                 <input
@@ -93,11 +95,12 @@ function SignUpForm() {
 
     const getUsernameElement = () => {
         let errorText: string | undefined = undefined;
-        if (formErrors.includes(FormError.NoUsername)) errorText = "Username is required";
-        else if (formErrors.includes(FormError.InvalidUsername)) errorText = "Username is invalid";
-        else if (formErrors.includes(FormError.UsernameInUse)) errorText = "Username is already in use";
+        if (formErrors?.includes(FormError.NoUsername)) errorText = "Username is required";
+        else if (formErrors?.includes(FormError.InvalidUsername)) errorText = "Username is invalid";
+        else if (formErrors?.includes(FormError.UsernameInUse)) errorText = "Username is already in use";
 
-        const validity = errorText ? "is-invalid" : "is-valid";
+        let validity = errorText ? "is-invalid" : "is-valid";
+        if (!formErrors) validity = "";
 
         return (
             <div className="form-floating mb-3">
@@ -120,9 +123,11 @@ function SignUpForm() {
 
     const getPasswordElement = () => {
         let errorText: string | undefined = undefined;
-        if (formErrors.includes(FormError.ShortPassword)) errorText = "Password must be at least 8 characters";
+        if (formErrors?.includes(FormError.ShortPassword)) errorText = "Password must be at least 8 characters";
 
-        const validity = errorText ? "is-invalid" : "is-valid";
+        let validity = errorText ? "is-invalid" : "is-valid";
+        if (!formErrors) validity = "";
+
         return (
             <div className="form-floating mb-3">
                 <input
